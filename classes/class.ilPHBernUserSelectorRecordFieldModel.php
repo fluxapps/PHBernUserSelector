@@ -49,4 +49,24 @@ class ilPHBernUserSelectorRecordFieldModel extends ilDclPluginRecordFieldModel
 		}
 		return $value;
 	}
+
+	/**
+	 * Function to parse incoming data from form input value $value. returns the string/number/etc. to store in the database.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
+	public function parseExportValue($value) {
+		if (!$this->field->hasProperty(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT) && is_array($value)) {
+			foreach ($value as $key => $input) {
+				$user = new ilObjUser($input);
+				$value[$key] = $user->getFullname();
+			}
+		}
+		if(is_array($value))
+			return implode(", ", $value);
+		else
+			return $value;
+	}
 }

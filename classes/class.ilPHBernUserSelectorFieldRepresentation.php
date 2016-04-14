@@ -9,6 +9,15 @@ require_once('./Modules/DataCollection/classes/Fields/Plugin/class.ilDclPluginFi
  */
 class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresentation {
 
+	protected $pl;
+
+	public function __construct(ilDclBaseFieldModel $field) {
+		parent::__construct($field);
+
+		$this->pl = ilPHBernUserSelectorPlugin::getInstance();
+	}
+
+
 	/**
 	 * Add filters to gui
 	 * @param ilTable2GUI $table
@@ -76,10 +85,12 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 	protected function buildFieldCreationInput(ilObjDataCollection $dcl, $mode = 'create') {
 		$opt = parent::buildFieldCreationInput($dcl, $mode);
 
-		$prop_email_input = new ilCheckboxInputGUI($this->lng->txt('User Email-Input'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT));
+		$pl =
+
+		$prop_email_input = new ilCheckboxInputGUI($this->pl->txt('user_email_input'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT));
 		$opt->addSubItem($prop_email_input);
 
-		$prop_role_limit = new ilSelectInputGUI($this->lng->txt('Limit to Role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
+		$prop_role_limit = new ilSelectInputGUI($this->pl->txt('limit_to_role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
 		$global_roles = $this->field->getRoles(ilRbacReview::FILTER_ALL);
 		$prop_role_limit->setOptions($global_roles);
 		$opt->addSubItem($prop_role_limit);
