@@ -60,7 +60,7 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 			$auto = new ilUserAutoComplete();
 			$auto->setSearchFields(array('login','firstname','lastname','email'));
 			$auto->enableFieldSearchableCheck(false);
-			$auto->setMoreLinkAvailable(true);
+			//$auto->setMoreLinkAvailable(true);
 
 			if(($_REQUEST['fetchall']))
 			{
