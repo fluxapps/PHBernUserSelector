@@ -90,9 +90,10 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		$prop_email_input = new ilCheckboxInputGUI($this->pl->txt('user_email_input'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT));
 		$opt->addSubItem($prop_email_input);
 
-		$prop_role_limit = new ilSelectInputGUI($this->pl->txt('limit_to_role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
+		/*$prop_role_limit = new ilSelectInputGUI($this->pl->txt('limit_to_role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
 		$global_roles = $this->field->getRoles(ilRbacReview::FILTER_ALL);
-		$prop_role_limit->setOptions($global_roles);
+		$prop_role_limit->setOptions($global_roles);*/
+		$prop_role_limit = new ilTextInputGUI($this->pl->txt('limit_to_role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
 		$opt->addSubItem($prop_role_limit);
 
 		return $opt;
