@@ -27,10 +27,14 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 	public function addFilterInputFieldToTable(ilTable2GUI $table) {
 		global $ilUser;
 		$input = new ilTextInputGUI($this->lng->txt("login")."/".$this->lng->txt("email")."/".$this->lng->txt("name"), "filter_".$this->field->getId());
-		$this->ctrl->setParameterByClass('ilObjUserFolderGUI', 'ref_id', 7);
-		$input->setDataSource($this->ctrl->getLinkTargetByClass(array('ilAdministrationGUI', 'ilObjUserFolderGUI'), "addUserAutoComplete", "", true));
-		$this->ctrl->clearParametersByClass('ilObjUserFolderGUI');
-		//$input->setDataSource('ilias.php?ref_id=7&admin_mode=settings&cmd=addUserAutoComplete&cmdClass=ilobjuserfoldergui&cmdNode=d1:wj&baseClass=ilAdministrationGUI&cmdMode=asynch');
+
+		// setup autocomplete
+		$ref_id = isset($_GET['ref_id'])? $_GET['ref_id'] : 0;
+		$this->ctrl->setParameterByClass('ildclrecordlistgui', 'ref_id', $ref_id);
+		$this->ctrl->setParameterByClass('ildclrecordlistgui', 'search', 1);
+		$input->setDataSource($this->ctrl->getLinkTargetByClass(array('ildclrecordlistgui'), "listRecords", "", true));
+		$this->ctrl->clearParametersByClass('ildclrecordlistgui');
+
 		$input->setSize(20);
 		$input->setSubmitFormOnEnter(true);
 
@@ -38,8 +42,34 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		$table->addFilterItem($input);
 		$input->readFromSession();
 
+		// handle ajax requests
+		$this->handleUserAutoComplete();
+
 		$value = $input->getValue();
 		return $ilUser->getUserIdByLogin($value);
+	}
+
+	/**
+	 * Show auto complete results
+	 */
+	protected function handleUserAutoComplete()
+	{
+		$ref_id = isset($_GET['ref_id'])? $_GET['ref_id'] : 0;
+		if(ilObjDataCollectionAccess::hasReadAccess($ref_id) && isset($_GET['search']) == 1) {
+			include_once './Services/User/classes/class.ilUserAutoComplete.php';
+			$auto = new ilUserAutoComplete();
+			$auto->setSearchFields(array('login','firstname','lastname','email'));
+			$auto->enableFieldSearchableCheck(false);
+			$auto->setMoreLinkAvailable(true);
+
+			if(($_REQUEST['fetchall']))
+			{
+				$auto->setLimit(ilUserAutoComplete::MAX_ENTRIES);
+			}
+
+			echo $auto->getList($_REQUEST['term']);
+			exit();
+		}
 	}
 
 
