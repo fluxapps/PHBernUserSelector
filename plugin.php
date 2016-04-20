@@ -1,6 +1,6 @@
 <?php
 $id = 'phbe_uselect';
-$version = '1.0.0';
+$version = '1.0.1';
 $ilias_min_version = '4.4.000';
 $ilias_max_version = '5.2.999';
 $responsible = 'Michael Herren';
