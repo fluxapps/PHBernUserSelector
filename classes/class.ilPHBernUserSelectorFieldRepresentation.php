@@ -27,8 +27,10 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 	public function addFilterInputFieldToTable(ilTable2GUI $table) {
 		global $ilUser;
 		$input = new ilTextInputGUI($this->lng->txt("login")."/".$this->lng->txt("email")."/".$this->lng->txt("name"), "filter_".$this->field->getId());
-		//$input->setDataSource($this->ctrl->getLinkTargetByClass('ilObjUserFolderGUI', "addUserAutoComplete", "", true));
-		$input->setDataSource('ilias.php?ref_id=7&admin_mode=settings&cmd=addUserAutoComplete&cmdClass=ilobjuserfoldergui&cmdNode=d1:wj&baseClass=ilAdministrationGUI&cmdMode=asynch');
+		$this->ctrl->setParameterByClass('ilObjUserFolderGUI', 'ref_id', 7);
+		$input->setDataSource($this->ctrl->getLinkTargetByClass(array('ilAdministrationGUI', 'ilObjUserFolderGUI'), "addUserAutoComplete", "", true));
+		$this->ctrl->clearParametersByClass('ilObjUserFolderGUI');
+		//$input->setDataSource('ilias.php?ref_id=7&admin_mode=settings&cmd=addUserAutoComplete&cmdClass=ilobjuserfoldergui&cmdNode=d1:wj&baseClass=ilAdministrationGUI&cmdMode=asynch');
 		$input->setSize(20);
 		$input->setSubmitFormOnEnter(true);
 
