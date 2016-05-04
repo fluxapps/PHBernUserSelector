@@ -66,7 +66,7 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 				if (!empty($email)) {
 					$user_exists = $ilUser->getUserIdByEmail($email);
 					if ($user_exists == 0) {
-						throw new ilDclInputException(10, sprintf(ilPHBernUserSelectorPlugin::getInstance()
+						throw new ilDclInputException(ilDclInputException::CUSTOM_MESSAGE, sprintf(ilPHBernUserSelectorPlugin::getInstance()
 							->txt('inserted_emailadress_are_not_registered_as_phbern_addresses'), $email));
 
 						return false;
@@ -75,7 +75,7 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 			}
 		} else {
 			if(!$ilUser->userExists(array_filter($value))) {
-				throw new ilDclInputException(10, ilPHBernUserSelectorPlugin::getInstance()->txt('not_valid_user'));
+				throw new ilDclInputException(ilDclInputException::CUSTOM_MESSAGE, ilPHBernUserSelectorPlugin::getInstance()->txt('not_valid_user'));
 				return false;
 			}
 		}
