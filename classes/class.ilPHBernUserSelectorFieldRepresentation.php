@@ -93,8 +93,13 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 			$input = new ilSelectInputGUI($this->field->getTitle(), 'field_' . $this->field->getId());
 			$input->setMulti(true);
 			$users = array();
-			if($this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP)) {
-				$users = $rbacreview->assignedUsers($this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
+			$limit_to_group = $this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP);
+			if($limit_to_group) {
+				$limit_to_group = (is_array($limit_to_group))? $limit_to_group : array($limit_to_group);
+				foreach($limit_to_group as $group) {
+					$users += $rbacreview->assignedUsers($group);
+				}
+				$users = array_unique($users);
 			}
 
 			$options = array(''=>$this->lng->txt('dcl_please_select'));
@@ -120,10 +125,13 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		$prop_email_input = new ilCheckboxInputGUI($this->pl->txt('user_email_input'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT));
 		$opt->addSubItem($prop_email_input);
 
-		/*$prop_role_limit = new ilSelectInputGUI($this->pl->txt('limit_to_role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
+		/* Dropdown with roles
+		$prop_role_limit = new ilSelectInputGUI($this->pl->txt('limit_to_role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
 		$global_roles = $this->field->getRoles(ilRbacReview::FILTER_ALL);
 		$prop_role_limit->setOptions($global_roles);*/
+
 		$prop_role_limit = new ilTextInputGUI($this->pl->txt('limit_to_role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
+		$prop_role_limit->setMulti(true);
 		$opt->addSubItem($prop_role_limit);
 
 		return $opt;
