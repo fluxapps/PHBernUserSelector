@@ -11,6 +11,12 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 
 	protected $pl;
 
+
+	/**
+	 * ilPHBernUserSelectorFieldRepresentation constructor.
+	 *
+	 * @param ilDclBaseFieldModel $field
+	 */
 	public function __construct(ilDclBaseFieldModel $field) {
 		parent::__construct($field);
 
