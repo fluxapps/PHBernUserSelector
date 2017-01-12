@@ -78,7 +78,6 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		}
 	}
 
-
 	/**
 	 * Return field inputs
 	 *
@@ -91,11 +90,8 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 	public function getInputField(ilPropertyFormGUI $form, $record_id = 0) {
 		global $rbacreview;
 		//Property Selector-type
-		if ($this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT)) {
-			$input = new ilDclTextInputGUI($this->field->getTitle(), 'field_' . $this->field->getId());
-			$input->setMulti(true);
-			$input->setInfo(ilPHBernUserSelectorPlugin::getInstance()->txt("user_selector_hint"));
-		} else {
+		if (($this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_INPUT_TYPE) == ilPHBernUserSelectorFieldModel::INPUT_TYPE_SELECT)
+				&& $this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP)) {
 			$input = new ilSelectInputGUI($this->field->getTitle(), 'field_' . $this->field->getId());
 			$input->setMulti(true);
 			$users = array();
@@ -108,12 +104,23 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 				$users = array_unique($users);
 			}
 
-			$options = array(''=>$this->lng->txt('dcl_please_select'));
 			foreach($users as $user_id) {
 				$user = new ilObjUser($user_id);
-				$options[$user_id] = $user->getFullname();
+				$options[$user->getLogin()] = $user->getLogin() . " [{$user->getFullname()}]";
 			}
+			asort($options);
+			$zero_option = array(''=>$this->lng->txt('dcl_please_select'));
+			$options = $zero_option + $options;
 			$input->setOptions($options);
+		} else {
+			// User name, login, email filter
+			include_once("./Services/Form/classes/class.ilTextInputGUI.php");
+			$input = new ilTextInputGUI($this->field->getTitle(), 'field_' . $this->field->getId());
+			$input->setMulti(true);
+			$this->ctrl->setParameterByClass('ilPHBernUserSelectorPlugin', 'field_id', $this->getField()->getId());
+			$input->setDataSource($this->ctrl->getLinkTargetByClass(array('ilUIPluginRouterGUI', 'ilPHBernUserSelectorPlugin'),
+				"addUserAutoComplete", "", true));
+			$input->setSize(20);
 		}
 
 		$this->setupInputField($input, $this->field);
@@ -127,6 +134,14 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 	 */
 	protected function buildFieldCreationInput(ilObjDataCollection $dcl, $mode = 'create') {
 		$opt = parent::buildFieldCreationInput($dcl, $mode);
+
+		$prop_input_type= new ilRadioGroupInputGUI($this->pl->txt('user_input_type'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_INPUT_TYPE));
+		$radio_opt = new ilRadioOption($this->pl->txt('input_type_text'), ilPHBernUserSelectorFieldModel::INPUT_TYPE_TEXT);
+		$prop_input_type->addOption($radio_opt);
+		$radio_opt = new ilRadioOption($this->pl->txt('input_type_select'), ilPHBernUserSelectorFieldModel::INPUT_TYPE_SELECT);
+		$prop_input_type->addOption($radio_opt);
+		$prop_input_type->setValue('text_input');
+		$opt->addSubItem($prop_input_type);
 
 		$prop_email_input = new ilCheckboxInputGUI($this->pl->txt('user_email_input'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT));
 		$opt->addSubItem($prop_email_input);

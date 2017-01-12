@@ -16,17 +16,17 @@ class ilPHBernUserSelectorRecordRepresentation extends ilDclBaseRecordRepresenta
 	 * @return string
 	 */
 	public function getHTML($link = true) {
-		if($this->record_field->getField()->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT)) {
-			$value = is_array($this->record_field->getValue()) ? implode(", ", $this->record_field->getValue()) : $this->record_field->getValue();
-		} else {
-			$value = "";
-			$users = is_array($this->record_field->getValue())? $this->record_field->getValue() : array($this->record_field->getValue());
-			foreach($users as $user) {
-				$user = new ilObjUser($user);
-				$value .= $user->getFullname().", ";
-			}
-			$value = substr($value, 0, -2);
+		$as_email = $this->record_field->getField()->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT);
+
+		$value = "";
+		$users = is_array($this->record_field->getValue())? $this->record_field->getValue() : array($this->record_field->getValue());
+		foreach($users as $user) {
+			$user = new ilObjUser(ilObjUser::_lookupId($user));
+			$value .= ($as_email ? $user->getEmail() : $user->getFullname()) .", ";
 		}
+
+		$value = substr($value, 0, -2);
+
 		return $value;
 	}
 }

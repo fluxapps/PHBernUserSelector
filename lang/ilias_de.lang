@@ -1,5 +1,8 @@
 not_valid_user#:#Dieser Benutzer exisitert nicht.
 user_selector_hint#:#Bitte geben Sie hier die entsprechenden PHBern Account Emailadressen ein
 inserted_emailadress_are_not_registered_as_phbern_addresses#:#Die Eingabe "%s" ist entweder keine gültige E-Mailadresse oder es handelt sich nicht um eine bei der PHBern hinterlegten E-Mailaddresse. Bitte prüfen Sie, ob diese fehlerfrei eintgetragen wurde.
-user_email_input#:#Adressen als E-Mail Eintragen
+user_email_input#:#E-Mail statt Namen anzeigen
 limit_to_role#:#Nur Benutzer mit folgender Rolle erlauben (obj_id)
+user_input_type#:#Typ des Eingabefeldes
+input_type_text#:#Textfeld (mit Auto-Vervollständigung)
+input_type_select#:#Auswahlfeld (Rollenbeschränkung benötigt)
