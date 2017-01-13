@@ -14,6 +14,10 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 	const PROP_USER_EMAIL_INPUT = "phbe_uselect_email_input";
 	const PROP_USER_LIMIT_GROUP = "phbe_uselect_user_group";
 
+	const PROP_HIDE_ON = "phbe_cdate_hide_on";
+	const FIELD = "f";
+	const VALUE = "v";
+
 	const INPUT_TYPE_TEXT = 0;
 	const INPUT_TYPE_SELECT = 1;
 
@@ -47,7 +51,7 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 	 * @inheritDoc
 	 */
 	public function getValidFieldProperties() {
-		return array(ilDclBaseFieldModel::PROP_PLUGIN_HOOK_NAME, self::PROP_USER_EMAIL_INPUT, self::PROP_USER_LIMIT_GROUP, self::PROP_USER_INPUT_TYPE);
+		return array(ilDclBaseFieldModel::PROP_PLUGIN_HOOK_NAME, self::PROP_USER_EMAIL_INPUT, self::PROP_USER_LIMIT_GROUP, self::PROP_USER_INPUT_TYPE, self::PROP_HIDE_ON);
 	}
 
 
