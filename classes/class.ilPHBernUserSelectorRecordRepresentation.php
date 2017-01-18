@@ -21,8 +21,12 @@ class ilPHBernUserSelectorRecordRepresentation extends ilDclBaseRecordRepresenta
 		$value = "";
 		$users = is_array($this->record_field->getValue())? $this->record_field->getValue() : array($this->record_field->getValue());
 		foreach($users as $user) {
-			$user = new ilObjUser(ilObjUser::_lookupId($user));
-			$value .= ($as_email ? $user->getEmail() : $user->getFullname()) .", ";
+			if (ilObjUser::_loginExists($user)) {
+				$user = new ilObjUser(ilObjUser::_lookupId($user));
+				$value .= ($as_email ? $user->getEmail() : $user->getFullname()) .", ";
+			} else {
+				$value .= $user . ', ';
+			}
 		}
 
 		$value = substr($value, 0, -2);

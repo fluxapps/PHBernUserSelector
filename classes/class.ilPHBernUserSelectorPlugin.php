@@ -50,12 +50,12 @@ class ilPHBernUserSelectorPlugin extends ilDclFieldTypePlugin {
 		}
 
 		$list = $auto->getList($_REQUEST['term']);
-		if ($limit_to_group) {
+		if ($limit_to_group && ($limit_to_group[0] != null)) {
 			global $rbacreview;
-			$limit_to_group = (is_array($limit_to_group))? $limit_to_group : array($limit_to_group);
 			global $ilLog;
+				$ilLog->write(print_r($limit_to_group,true));
+			$limit_to_group = (is_array($limit_to_group))? $limit_to_group : array($limit_to_group);
 			$array = json_decode($list, true);
-			$ilLog->write(print_r($array, true));
 			foreach($array['items'] as $key => $item) {
 				if (!$rbacreview->isAssignedToAtLeastOneGivenRole($item['id'], $limit_to_group)) {
 					unset($array['items'][$key]);

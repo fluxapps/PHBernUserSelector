@@ -70,9 +70,10 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 			throw new ilDclInputException(ilDclInputException::TYPE_EXCEPTION);
 		}
 
-
-		if(!$ilUser->userExists(array_filter(ilObjUser::_lookupId($value)))) {
-			throw new ilDclInputException(ilDclInputException::CUSTOM_MESSAGE, ilPHBernUserSelectorPlugin::getInstance()->txt('not_valid_user'));
+		foreach ($value as $v) {
+			if(substr($v, -1) != '*' && !$ilUser->userExists(array(ilObjUser::_lookupId($v)))) {
+				throw new ilDclInputException(ilDclInputException::CUSTOM_MESSAGE, ilPHBernUserSelectorPlugin::getInstance()->txt('not_valid_user'));
+			}
 		}
 
 		return true;
