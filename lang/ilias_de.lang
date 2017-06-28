@@ -6,5 +6,5 @@ limit_to_role#:#Nur Benutzer mit folgender Rolle erlauben (obj_id)
 user_input_type#:#Typ des Eingabefeldes
 input_type_text#:#Textfeld (mit Auto-Vervollständigung)
 input_type_select#:#Auswahlfeld (Rollenbeschränkung benötigt)
-info_autocomplete#:#Auto-Vervollständigung: Suchen Sie nach Name, Login oder Email des Benutzers
+info_autocomplete#:#Auto-Vervollständigung: Suchen Sie nach Name, Login oder Email des Benutzers.<br>Soll ein Benutzer angegeben werden, welcher in ILIAS nicht existiert, muss am Ende ein Stern (*) hinzugefügt werden (z.B.: Max Muster*).
 hide_on_field#:#Feld ausblenden bei Feld(er) & Wert(en):
