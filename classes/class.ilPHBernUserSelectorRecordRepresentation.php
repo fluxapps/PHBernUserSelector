@@ -26,7 +26,7 @@ class ilPHBernUserSelectorRecordRepresentation extends ilDclBaseRecordRepresenta
 					$user = ilObjUser::_lookupId($user);
 				}
 				$user = new ilObjUser($user);
-				$value .= ($as_email ? $user->getEmail() : $user->getFullname()) .", ";
+				$value .= ($as_email ? $user->getEmail() : ($user->getFirstname() . ' ' . $user->getLastname())) .", ";
 			} else {
 				$value .= $user . ', ';
 			}
