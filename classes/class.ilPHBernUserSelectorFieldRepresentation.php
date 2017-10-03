@@ -14,6 +14,7 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 	protected $pl;
 
 
+
 	/**
 	 * ilPHBernUserSelectorFieldRepresentation constructor.
 	 *
@@ -95,7 +96,7 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		if (($this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_INPUT_TYPE) == ilPHBernUserSelectorFieldModel::INPUT_TYPE_SELECT)
 				&& $this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP)) {
 			$input = new ilSelectInputGUI($this->field->getTitle(), 'field_' . $this->field->getId());
-			$input->setMulti(true);
+			$input->setMulti($this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_MULTI));
 			$users = array();
 			$limit_to_group = $this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP);
 			if($limit_to_group) {
@@ -117,7 +118,7 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		} else {
 			include_once("./Services/Form/classes/class.ilTextInputGUI.php");
 			$input = new ilTextInputGUI($this->field->getTitle(), 'field_' . $this->field->getId());
-			$input->setMulti(true);
+			$input->setMulti($this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_MULTI));
 			$this->ctrl->setParameterByClass('ilPHBernUserSelectorPlugin', 'field_id', $this->getField()->getId());
 			$input->setDataSource($this->ctrl->getLinkTargetByClass(array('ilUIPluginRouterGUI', 'ilPHBernUserSelectorPlugin'),
 				"addUserAutoComplete", "", true));
@@ -126,39 +127,6 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		}
 
 		$this->setupInputField($input, $this->field);
-
-		if($this->field->hasProperty(ilPHBernUserSelectorFieldModel::PROP_HIDE_ON)) {
-			$field_value_pairs = $this->field->getProperty(ilPHBernUserSelectorFieldModel::PROP_HIDE_ON);
-			$or = '';
-			$condition = '';
-			foreach ($field_value_pairs as $array) {
-				$field_id = $array[ilPHBernUserSelectorFieldModel::FIELD];
-				$field_value = $array[ilPHBernUserSelectorFieldModel::VALUE];
-
-				$condition .= $or . '$("#field_'.$field_id.'").val() == "'.$field_value.'"';
-				$or = ' || ';
-				if(isset($_POST['field_'.$field_id]) && $_POST['field_'.$field_id] == $field_value) {
-					$input->setRequired(false);
-				}
-			}
-
-			if ($condition) {
-				$script = '$("#field_'.$field_id.'")
-				.change(function () {
-					if('.$condition.') {
-						$("#field_'.$this->field->getId().'").val("");
-						$("#il_prop_cont_field_'.$this->field->getId().'").hide();
-					} else {
-						$("#il_prop_cont_field_'.$this->field->getId().'").show();
-					}
-				})
-				.change();';
-
-				$tpl->addOnLoadCode($script);
-
-			}
-
-		}
 
 		return $input;
 	}
@@ -178,6 +146,9 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		$prop_input_type->setValue('text_input');
 		$opt->addSubItem($prop_input_type);
 
+		$multi_selection = new ilCheckboxInputGUI($this->pl->txt('multi_selection'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_MULTI));
+		$opt->addSubItem($multi_selection);
+
 		$prop_email_input = new ilCheckboxInputGUI($this->pl->txt('user_email_input'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_EMAIL_INPUT));
 		$opt->addSubItem($prop_email_input);
 
@@ -189,25 +160,6 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		$prop_role_limit = new ilTextInputGUI($this->pl->txt('limit_to_role'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_USER_LIMIT_GROUP));
 		$prop_role_limit->setMulti(true);
 		$opt->addSubItem($prop_role_limit);
-
-		$multiinput = new srDclContentImporterMultiLineInputGUI($this->pl->txt('hide_on_field'), $this->getPropertyInputFieldId(ilPHBernUserSelectorFieldModel::PROP_HIDE_ON));
-		$multiinput->setInfo("Field & Field-Value");
-		$multiinput->setTemplateDir(ilDclContentImporterPlugin::getInstance()->getDirectory());
-
-		$input = new ilSelectInputGUI($this->pl->txt('hide_on_field'),ilPHBernUserSelectorFieldModel::FIELD);
-
-		$fields = ilDclCache::getTableCache($this->field->getTableId())->getFields();
-		$options = array(''=>'');
-		foreach($fields as $field) {
-			$options[$field->getId()] = $field->getTitle();
-		}
-		$input->setOptions($options);
-		$multiinput->addInput($input);
-
-		$input = new ilTextInputGUI('Datacollection Ref-ID', ilPHBernUserSelectorFieldModel::VALUE);
-		$multiinput->addInput($input);
-
-		$opt->addSubItem($multiinput);
 
 		return $opt;
 	}

@@ -28,7 +28,14 @@ class ilPHBernUserSelectorRecordFieldModel extends ilDclPluginRecordFieldModel
 	 * @return mixed
 	 */
 	public function deserializeData($value) {
-		return json_decode($value, true);
+		$json_decoded = json_decode($value, true);
+		if (is_array($json_decoded)) {
+			if (!$this->getField()->getProperty(ilPHBernUserSelectorFieldModel::PROP_MULTI)) {
+				return array_shift($json_decoded);
+			}
+			return $json_decoded;
+		}
+		return $value;
 	}
 
 	/**
@@ -72,4 +79,6 @@ class ilPHBernUserSelectorRecordFieldModel extends ilDclPluginRecordFieldModel
 //		}
 		return $split;
 	}
+
+
 }

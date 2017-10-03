@@ -13,8 +13,8 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 	const PROP_USER_INPUT_TYPE = 'phber_uselect_input_type';
 	const PROP_USER_EMAIL_INPUT = "phbe_uselect_email_input";
 	const PROP_USER_LIMIT_GROUP = "phbe_uselect_user_group";
+	const PROP_MULTI = "phbe_uselect_multi";
 
-	const PROP_HIDE_ON = "phbe_cdate_hide_on";
 	const FIELD = "f";
 	const VALUE = "v";
 
@@ -51,7 +51,7 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 	 * @inheritDoc
 	 */
 	public function getValidFieldProperties() {
-		return array(ilDclBaseFieldModel::PROP_PLUGIN_HOOK_NAME, self::PROP_USER_EMAIL_INPUT, self::PROP_USER_LIMIT_GROUP, self::PROP_USER_INPUT_TYPE, self::PROP_HIDE_ON);
+		return array(ilDclBaseFieldModel::PROP_PLUGIN_HOOK_NAME, self::PROP_USER_EMAIL_INPUT, self::PROP_USER_LIMIT_GROUP, self::PROP_USER_INPUT_TYPE, self::PROP_MULTI);
 	}
 
 
@@ -64,6 +64,15 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 	 * @throws ilDclInputException
 	 */
 	public function checkValidity($value, $record_id = NULL) {
+		if ($this->getProperty(self::PROP_MULTI)) {
+			return $this->checkValidityMulti($value, $record_id);
+		}
+
+		return parent::checkValidity($value, $record_id);
+
+	}
+
+	protected function checkValidityMulti($value, $record_id = NULL) {
 		global $ilUser;
 
 		if(!is_array($value)) {
