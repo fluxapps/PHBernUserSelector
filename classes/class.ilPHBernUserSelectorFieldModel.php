@@ -80,7 +80,7 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 		}
 
 		foreach ($value as $v) {
-			if(substr($v, -1) != '*' && !$ilUser->userExists(array(ilObjUser::_lookupId($v)))) {
+			if($v && substr($v, -1) != '*' && !$ilUser->userExists(array(ilObjUser::_lookupId($v)))) {
 				throw new ilDclInputException(ilDclInputException::CUSTOM_MESSAGE, ilPHBernUserSelectorPlugin::getInstance()->txt('not_valid_user'));
 			}
 		}
