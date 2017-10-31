@@ -38,10 +38,15 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		$input = new ilTextInputGUI($this->lng->txt("login")."/".$this->lng->txt("email")."/".$this->lng->txt("name"), "filter_".$this->field->getId());
 
 		// setup autocomplete
-		$ref_id = isset($_GET['ref_id'])? $_GET['ref_id'] : 0;
-		$this->ctrl->setParameterByClass('ildclrecordlistgui', 'ref_id', $ref_id);
-		$this->ctrl->setParameterByClass('ildclrecordlistgui', 'search', 1);
-		$input->setDataSource($this->ctrl->getLinkTargetByClass(array('ilobjdatacollectiongui', 'ildclrecordlistgui'), "listRecords", "", true));
+//		$ref_id = isset($_GET['ref_id'])? $_GET['ref_id'] : 0;
+//		$this->ctrl->setParameterByClass('ildclrecordlistgui', 'ref_id', $ref_id);
+//		$this->ctrl->setParameterByClass('ildclrecordlistgui', 'search', 1);
+//		$input->setDataSource($this->ctrl->getLinkTargetByClass(array('ilobjdatacollectiongui', 'ildclrecordlistgui'), "listRecords", "", true));
+
+		$this->ctrl->setParameterByClass('ilPHBernUserSelectorPlugin', 'field_id', $this->getField()->getId());
+		$input->setDataSource($this->ctrl->getLinkTargetByClass(array('ilUIPluginRouterGUI', 'ilPHBernUserSelectorPlugin'),
+			"addUserAutoComplete", "", true));
+
 		$this->ctrl->clearParametersByClass('ildclrecordlistgui');
 
 		$input->setSize(20);
@@ -52,7 +57,7 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		$input->readFromSession();
 
 		// handle ajax requests
-		$this->handleUserAutoComplete();
+//		$this->handleUserAutoComplete();
 
 		return $input->getValue();
 	}
@@ -68,7 +73,7 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 			$auto = new ilUserAutoComplete();
 			$auto->setSearchFields(array('login','firstname','lastname','email'));
 			$auto->enableFieldSearchableCheck(false);
-			//$auto->setMoreLinkAvailable(true);
+			$auto->setMoreLinkAvailable(true);
 
 			if(($_REQUEST['fetchall']))
 			{
