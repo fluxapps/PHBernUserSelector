@@ -54,8 +54,7 @@ class ilPHBernUserSelectorFieldRepresentation extends ilDclPluginFieldRepresenta
 		// handle ajax requests
 		$this->handleUserAutoComplete();
 
-		$value = $input->getValue();
-		return $ilUser->getUserIdByLogin($value);
+		return $input->getValue();
 	}
 
 	/**
