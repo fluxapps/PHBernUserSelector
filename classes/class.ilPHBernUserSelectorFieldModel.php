@@ -9,8 +9,17 @@ require_once("./Modules/DataCollection/classes/Helpers/class.ilDclRecordQueryObj
  * @version 1.0.0
  */
 class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
+
+	const PROP_USER_INPUT_TYPE = 'phber_uselect_input_type';
 	const PROP_USER_EMAIL_INPUT = "phbe_uselect_email_input";
 	const PROP_USER_LIMIT_GROUP = "phbe_uselect_user_group";
+	const PROP_MULTI = "phbe_uselect_multi";
+
+	const FIELD = "f";
+	const VALUE = "v";
+
+	const INPUT_TYPE_TEXT = 0;
+	const INPUT_TYPE_SELECT = 1;
 
 	/**
 	 * @inheritDoc
@@ -42,7 +51,7 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 	 * @inheritDoc
 	 */
 	public function getValidFieldProperties() {
-		return array(ilDclBaseFieldModel::PROP_PLUGIN_HOOK_NAME, self::PROP_USER_EMAIL_INPUT, self::PROP_USER_LIMIT_GROUP);
+		return array(ilDclBaseFieldModel::PROP_PLUGIN_HOOK_NAME, self::PROP_USER_EMAIL_INPUT, self::PROP_USER_LIMIT_GROUP, self::PROP_USER_INPUT_TYPE, self::PROP_MULTI);
 	}
 
 
@@ -55,29 +64,31 @@ class ilPHBernUserSelectorFieldModel extends ilDclTextFieldModel {
 	 * @throws ilDclInputException
 	 */
 	public function checkValidity($value, $record_id = NULL) {
-		global $ilUser, $lng;
+		if ($this->getProperty(self::PROP_MULTI)) {
+			return $this->checkValidityMulti($value, $record_id);
+		}
+
+		return parent::checkValidity($value, $record_id);
+
+	}
+
+	protected function checkValidityMulti($value, $record_id = NULL) {
+		global $ilUser;
 
 		if(!is_array($value)) {
 			throw new ilDclInputException(ilDclInputException::TYPE_EXCEPTION);
 		}
 
-		if($this->getProperty(self::PROP_USER_EMAIL_INPUT)) {
-			foreach($value as $email) {
-				$user_exists = $ilUser->getUserIdByEmail($email);
-				if($user_exists == 0) {
-					throw new ilDclInputException(10, sprintf(ilPHBernUserSelectorPlugin::getInstance()->txt('inserted_emailadress_are_not_registered_as_phbern_addresses'), $email));
-					return false;
-				}
-			}
-		} else {
-			if(!$ilUser->userExists($value)) {
-				throw new ilDclInputException(10, ilPHBernUserSelectorPlugin::getInstance()->txt('not_valid_user'));
-				return false;
+		foreach ($value as $v) {
+			if($v && substr($v, -1) != '*' && !$ilUser->userExists(array(ilObjUser::_lookupId($v)))) {
+				throw new ilDclInputException(ilDclInputException::CUSTOM_MESSAGE, ilPHBernUserSelectorPlugin::getInstance()->txt('not_valid_user'));
 			}
 		}
 
 		return true;
 	}
+
+
 
 	/**
 	 * Return roles
